@@ -1,0 +1,4 @@
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbo6e0rg4/dolfin_expression_e6c8e5846a462a16758e6e878dbc3803.cpp:63:29: error: invalid operands to binary expression ('double' and 'double')
+          values[0] = w_j /j^0.3*sin(j*pi*x[0]);
+                      ~~~~~~^~~~~~~~~~~~~~~~~~~
+1 error generated.

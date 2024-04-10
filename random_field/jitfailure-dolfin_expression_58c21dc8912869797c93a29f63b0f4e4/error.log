@@ -1,0 +1,98 @@
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:55: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                      ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:92: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                          ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:129: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                              ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:166: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                  ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:203: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                      ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:240: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                          ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:277: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                              ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:314: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                                                                  ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:351: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                                                                                                      ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:34: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                 ^~~~~
+                                 std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:71: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                     ^~~~~
+                                                                     std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:108: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                         ^~~~~
+                                                                                                         std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:145: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                             ^~~~~
+                                                                                                                                             std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:182: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                 ^~~~~
+                                                                                                                                                                                 std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:219: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                     ^~~~~
+                                                                                                                                                                                                                     std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:256: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                         ^~~~~
+                                                                                                                                                                                                                                                         std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:293: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                                             ^~~~~
+                                                                                                                                                                                                                                                                                             std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:330: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                                                                                 ^~~~~
+                                                                                                                                                                                                                                                                                                                                 std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbf92v435/dolfin_expression_58c21dc8912869797c93a29f63b0f4e4.cpp:65:367: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0])　+ y[2]/pow(2,alpha)*sin(3*pi*x[0])　+ y[3]/pow(3,alpha)*sin(4*pi*x[0])　+ y[4]/pow(4,alpha)*sin(5*pi*x[0])　+ y[5]/pow(5,alpha)*sin(6*pi*x[0])　+ y[6]/pow(6,alpha)*sin(7*pi*x[0])　+ y[7]/pow(7,alpha)*sin(8*pi*x[0])　+ y[8]/pow(8,alpha)*sin(9*pi*x[0])　+ y[9]/pow(9,alpha)*sin(10*pi*x[0]);
+                                                                                                                                                                                                                                                                                                                                                                     ^~~~~
+                                                                                                                                                                                                                                                                                                                                                                     std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+9 warnings and 10 errors generated.

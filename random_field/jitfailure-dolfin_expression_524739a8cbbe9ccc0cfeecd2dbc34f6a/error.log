@@ -1,0 +1,18 @@
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbj6txim_/dolfin_expression_524739a8cbbe9ccc0cfeecd2dbc34f6a.cpp:65:55: warning: treating Unicode character as whitespace [-Wunicode-whitespace]
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0]);
+                                                      ^~
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbj6txim_/dolfin_expression_524739a8cbbe9ccc0cfeecd2dbc34f6a.cpp:65:34: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0]);
+                                 ^~~~~
+                                 std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+/var/folders/br/kqx4wrcd4yn6zmk5jlrz9r7c0000gn/T/tmpbj6txim_/dolfin_expression_524739a8cbbe9ccc0cfeecd2dbc34f6a.cpp:65:71: error: use of undeclared identifier 'alpha'; did you mean 'std::ctype_base::alpha'?
+          values[0] = y[0]/pow(1,alpha)*sin(1*pi*x[0])　+ y[1]/pow(1,alpha)*sin(2*pi*x[0]);
+                                                                     ^~~~~
+                                                                     std::ctype_base::alpha
+/Users/naoki/miniconda3/envs/fenicsproject/bin/../include/c++/v1/__locale:471:23: note: 'std::ctype_base::alpha' declared here
+    static const mask alpha  = _CTYPE_A;
+                      ^
+1 warning and 2 errors generated.
