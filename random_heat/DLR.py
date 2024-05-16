@@ -311,16 +311,16 @@ class DLR:
             self.matrix_calculate()
 
             det = np.linalg.det(self.matrix)
-            if np.isclose(det, 0):
-                break
-            else:
-                A = []
-                for i in range(self.R):
-                    A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
-                A = np.array(A)
-                self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
-                #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
-                
+            # if np.isclose(det, 0):
+            #     break
+            # else:
+            A = []
+            for i in range(self.R):
+                A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
+            A = np.array(A)
+            self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
+            #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
+            
             
             # reorthogonalize
             self.reorthogonalize()
