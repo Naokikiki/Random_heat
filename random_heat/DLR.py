@@ -240,16 +240,30 @@ class DLR:
         return v - ortho
     
     def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
-        Q, _ = np.linalg.qr(np.transpose(self.Y))
-        # self.Y = np.transpose(Q) 
-        self.Y = np.transpose(Q) *np.sqrt(self.sample_size)
-        vectors = []
+        U_vectors = []
         for i in range(self.R):
-            vectors.append(self.U[i].vector()[:])
-        vectors = np.matmul(_,vectors)
+            U_vectors.append(self.U[i].vector()[:])
+        U, S, Vt = np.linalg.svd(np.matmul(np.transpose(U_vectors),self.Y), full_matrices=False)    
+        U_reduced = U[:, :self.R]      # N x R
+        S_reduced = np.diag(S[:self.R])  # R x R
+        Vt_reduced = Vt[:self.R, :]    # R x M
+        
+        U_vectors =np.transpose(np.matmul(U_reduced,S_reduced) / np.sqrt(self.sample_size))
         for i in range(self.R):
-            # self.U[i].vector()[:] = vectors[i] 
-            self.U[i].vector()[:] = vectors[i] /np.sqrt(self.sample_size)
+            self.U[i].vector()[:] = U_vectors[i]
+        self.Y = Vt_reduced * np.sqrt(self.sample_size)
+
+    # def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
+    #     Q, _ = np.linalg.qr(np.transpose(self.Y))
+    #     # self.Y = np.transpose(Q) 
+    #     self.Y = np.transpose(Q) *np.sqrt(self.sample_size)
+    #     vectors = []
+    #     for i in range(self.R):
+    #         vectors.append(self.U[i].vector()[:])
+    #     vectors = np.matmul(_,vectors)
+    #     for i in range(self.R):
+    #         # self.U[i].vector()[:] = vectors[i] 
+    #         self.U[i].vector()[:] = vectors[i] /np.sqrt(self.sample_size)
 
 
 
@@ -428,19 +442,20 @@ class DLR:
         energy = assemble(form) / self.sample_size
         return energy
     
+    # def exl2norm(self):
+    #     u = self.mean
+    #     for j in range(self.R):
+    #         u += self.U[j] * Constant(self.Y[j][0])
+    #     form = u* u * dx
+    #     for i in range(1,self.sample_size):
+    #         u = self.mean
+    #         for j in range(self.R):
+    #             u += self.U[j] * Constant(self.Y[j][i])
+    #         form += u * u * dx
+    #     exl2 = assemble(form) / self.sample_size
+    #     return np.sqrt(exl2)
     def exl2norm(self):
-        u = self.mean
-        for j in range(self.R):
-            u += self.U[j] * Constant(self.Y[j][0])
-        form = u* u * dx
-        for i in range(1,self.sample_size):
-            u = self.mean
-            for j in range(self.R):
-                u += self.U[j] * Constant(self.Y[j][i])
-            form += u* u * dx
-        exl2 = assemble(form) / self.sample_size
-        return exl2
-
+        return norm(self.mean,'l2')
     
     # monitor energy norm
     def plot_norm(self):
@@ -633,17 +648,32 @@ class DLR2:
             ortho += np.inner(v,self.Y[i]) / self.sample_size * self.Y[i]
         return v - ortho
     
-    def reorthogonalize(self):
-        Q, _ = np.linalg.qr(np.transpose(self.Y))
-        # self.Y =  np.transpose(Q)
-        self.Y =  np.sqrt(self.sample_size) * np.transpose(Q)
-        vectors = []
+    def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
+        U_vectors = []
         for i in range(self.R):
-            vectors.append(self.U[i].vector()[:])
-        # vectors = np.matmul(_ ,vectors)
-        vectors = np.matmul(_ /np.sqrt(self.sample_size),vectors)
+            U_vectors.append(self.U[i].vector()[:])
+        U, S, Vt = np.linalg.svd(np.matmul(np.transpose(U_vectors),self.Y), full_matrices=False)    
+        U_reduced = U[:, :self.R]      # N x R
+        S_reduced = np.diag(S[:self.R])  # R x R
+        Vt_reduced = Vt[:self.R, :]    # R x M
+        
+        U_vectors =np.transpose(np.matmul(U_reduced,S_reduced) / np.sqrt(self.sample_size))
         for i in range(self.R):
-            self.U[i].vector()[:] = vectors[i]
+            self.U[i].vector()[:] = U_vectors[i]
+        self.Y = Vt_reduced * np.sqrt(self.sample_size)
+
+
+    # def reorthogonalize(self):
+    #     Q, _ = np.linalg.qr(np.transpose(self.Y))
+    #     # self.Y =  np.transpose(Q)
+    #     self.Y =  np.sqrt(self.sample_size) * np.transpose(Q)
+    #     vectors = []
+    #     for i in range(self.R):
+    #         vectors.append(self.U[i].vector()[:])
+    #     # vectors = np.matmul(_ ,vectors)
+    #     vectors = np.matmul(_ /np.sqrt(self.sample_size),vectors)
+    #     for i in range(self.R):
+    #         self.U[i].vector()[:] = vectors[i]
 
 
     #explicit scheme
