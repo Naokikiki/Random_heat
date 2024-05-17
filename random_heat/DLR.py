@@ -112,12 +112,23 @@ class DLR:
             self.a_0 = a_0
             self.a_sto = a_sto
             self.a = a
+
+        #M_i,j = <U_i,U_j>
+        self.matrix = np.zeros((R,R)) 
+
+        # Mass matrix
+        tri = TrialFunction(self.V)
+        test = TestFunction(self.V)
+        integral = tri * test * dx
+        A = assemble(integral)
+        # Convert the matrix to a NumPy array for easier inspection
+        self.mass_matrix = as_backend_type(A).mat().getValues(range(A.size(0)), range(A.size(1)))
+
+
+        print("energy",self.energynorm())
+        print("l2",self.exl2norm())
         
-        # print("hi",self.energynorm())
-        # print("hi",self.exl2norm())
-        # print(np.mean(self.Y[0]))
-        # print(np.mean(self.Y[1]))
-        # print(np.mean(self.Y[2]))
+        
 
         for i in range(self.R):
             Y_i_mean = np.mean(self.Y[i])
@@ -127,14 +138,11 @@ class DLR:
         
         self.reorthogonalize()
         
-        # print("hi",self.energynorm())
-        # print("hi",self.exl2norm())
-        # print(np.matmul(self.Y,np.transpose(self.Y)))
-        # print(np.mean(self.Y[0]))
-        # print(np.mean(self.Y[1]))
-        # print(np.mean(self.Y[2]))
+        print("energy",self.energynorm())
+        print("l2",self.exl2norm())
         
-        self.matrix = np.zeros((R,R))
+
+         
                    
         ##for plot
         self.timelist = []
@@ -239,19 +247,35 @@ class DLR:
             ortho += np.inner(v,self.Y[i]) / self.sample_size * self.Y[i]
         return v - ortho
     
-    def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
+    def reorthogonalize(self):
         U_vectors = []
         for i in range(self.R):
             U_vectors.append(self.U[i].vector()[:])
-        U, S, Vt = np.linalg.svd(np.matmul(np.transpose(U_vectors),self.Y), full_matrices=False)    
-        U_reduced = U[:, :self.R]      # N x R
-        S_reduced = np.diag(S[:self.R])  # R x R
-        Vt_reduced = Vt[:self.R, :]    # R x M
-        
-        U_vectors =np.transpose(np.matmul(U_reduced,S_reduced) / np.sqrt(self.sample_size))
-        for i in range(self.R):
-            self.U[i].vector()[:] = U_vectors[i]
+        U_vectors = np.array(U_vectors)
+        UY = U_vectors.T @ self.Y
+        Matrix = UY.T @ self.mass_matrix @ UY
+        U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
+        Vt_reduced = Vt[:self.R, :]
+
         self.Y = Vt_reduced * np.sqrt(self.sample_size)
+        U_vectors = self.Y @ UY.T
+        for i in range(self.R):
+            self.U[i].vector()[:] = U_vectors[i] / np.sqrt(self.sample_size)
+
+    
+    # def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
+    #     U_vectors = []
+    #     for i in range(self.R):
+    #         U_vectors.append(self.U[i].vector()[:])
+    #     U, S, Vt = np.linalg.svd(np.matmul(np.transpose(U_vectors),self.Y), full_matrices=False)    
+    #     U_reduced = U[:, :self.R]      # N x R
+    #     S_reduced = np.diag(S[:self.R])  # R x R
+    #     Vt_reduced = Vt[:self.R, :]    # R x M
+        
+    #     U_vectors =np.transpose(np.matmul(U_reduced,S_reduced) / np.sqrt(self.sample_size))
+    #     for i in range(self.R):
+    #         self.U[i].vector()[:] = U_vectors[i]
+    #     self.Y = Vt_reduced * np.sqrt(self.sample_size)
 
     # def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
     #     Q, _ = np.linalg.qr(np.transpose(self.Y))
@@ -442,20 +466,21 @@ class DLR:
         energy = assemble(form) / self.sample_size
         return energy
     
-    # def exl2norm(self):
-    #     u = self.mean
-    #     for j in range(self.R):
-    #         u += self.U[j] * Constant(self.Y[j][0])
-    #     form = u* u * dx
-    #     for i in range(1,self.sample_size):
-    #         u = self.mean
-    #         for j in range(self.R):
-    #             u += self.U[j] * Constant(self.Y[j][i])
-    #         form += u * u * dx
-    #     exl2 = assemble(form) / self.sample_size
-    #     return np.sqrt(exl2)
     def exl2norm(self):
-        return norm(self.mean,'l2')
+        u = self.mean
+        for j in range(self.R):
+            u += self.U[j] * Constant(self.Y[j][0])
+        form = u* u * dx
+        for i in range(1,self.sample_size):
+            u = self.mean
+            for j in range(self.R):
+                u += self.U[j] * Constant(self.Y[j][i])
+            form += u * u * dx
+        exl2 = assemble(form) / self.sample_size
+        return np.sqrt(exl2)
+    
+    # def exl2norm(self):
+    #     return norm(self.mean,'l2')
     
     # monitor energy norm
     def plot_norm(self):
@@ -544,6 +569,19 @@ class DLR2:
         self.a_sto = a_sto
         self.a = a 
         
+
+        #M_i,j = <U_i,U_j>
+        self.matrix = np.zeros((R,R)) 
+
+        # Mass matrix
+        tri = TrialFunction(self.V)
+        test = TestFunction(self.V)
+        integral = tri * test * dx
+        A = assemble(integral)
+        # Convert the matrix to a NumPy array for easier inspection
+        self.mass_matrix = as_backend_type(A).mat().getValues(range(A.size(0)), range(A.size(1)))
+
+
         # print("hi",self.energynorm())
         # print("hi",self.exl2norm())
         # print(np.mean(self.Y[0]))
@@ -559,10 +597,7 @@ class DLR2:
         # print(np.mean(self.Y[2]))
        
         
-        self.matrix = np.zeros((R,R))
 
-        
-                   
         ##for plot
         self.timelist = []
         self.energylist = []
