@@ -202,7 +202,7 @@ class DLR:
         for i in range(self.sample_size):
             func = self.mean
             for j in range(self.R):
-                func += (self.U[j] * Constant(self.Y[j][i]) )
+                func += (self.U_n[j] * Constant(self.Y[j][i]) )
             u.append(func)
         for i in range(self.R):
             for j in range(self.sample_size):
@@ -342,15 +342,16 @@ class DLR:
          
             self.matrix_calculate()
 
-            det = np.linalg.det(self.matrix)
-            # if np.isclose(det, 0):
-            #     break
-            # else:
+           
             A = []
             for i in range(self.R):
                 A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
             A = np.array(A)
-            self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
+            det = np.linalg.det(self.matrix)
+            if np.isclose(det, 0):
+                self.Y += -self.dt * scipy.linalg.lstsq(self.matrix,A)[0]
+            else:
+                self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
             #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
             
             # reorthogonalize
@@ -647,7 +648,7 @@ class DLR2:
         for i in range(self.sample_size):
             func = Constant(0)
             for j in range(self.R):
-                func += (self.U[j] * Constant(self.Y[j][i]) )
+                func += (self.U_n[j] * Constant(self.Y[j][i]) )
             u.append(func)
         for i in range(self.R):
             for j in range(self.sample_size):
@@ -695,22 +696,22 @@ class DLR2:
     # def reorthogonalize(self):
     #     return
 
-    def reorthogonalize(self):
-        U_vectors = []
-        v2d = vertex_to_dof_map(self.V)
-        for i in range(self.R):
-            U_vectors.append(self.U[i].vector()[v2d])
-        U_vectors = np.array(U_vectors)
-        UY = U_vectors.T @ self.Y
-        Matrix = UY.T @ self.mass_matrix @ UY
-        U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
-        Vt_reduced = Vt[:self.R, :]
+    # def reorthogonalize(self):
+    #     U_vectors = []
+    #     v2d = vertex_to_dof_map(self.V)
+    #     for i in range(self.R):
+    #         U_vectors.append(self.U[i].vector()[v2d])
+    #     U_vectors = np.array(U_vectors)
+    #     UY = U_vectors.T @ self.Y
+    #     Matrix = UY.T @ self.mass_matrix @ UY
+    #     U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
+    #     Vt_reduced = Vt[:self.R, :]
 
-        self.Y = Vt_reduced 
-        U_vectors = self.Y @ UY.T
-        self. Y *= np.sqrt(self.sample_size)
-        for i in range(self.R):
-            self.U[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
+    #     self.Y = Vt_reduced 
+    #     U_vectors = self.Y @ UY.T
+    #     self. Y *= np.sqrt(self.sample_size)
+    #     for i in range(self.R):
+    #         self.U[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
             
     # def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
     #     U_vectors = []
@@ -727,17 +728,17 @@ class DLR2:
     #     self.Y = Vt_reduced * np.sqrt(self.sample_size)
 
 
-    # def reorthogonalize(self):
-    #     Q, _ = np.linalg.qr(np.transpose(self.Y))
-    #     # self.Y =  np.transpose(Q)
-    #     self.Y =  np.sqrt(self.sample_size) * np.transpose(Q)
-    #     vectors = []
-    #     for i in range(self.R):
-    #         vectors.append(self.U[i].vector()[:])
-    #     # vectors = np.matmul(_ ,vectors)
-    #     vectors = np.matmul(_ /np.sqrt(self.sample_size),vectors)
-    #     for i in range(self.R):
-    #         self.U[i].vector()[:] = vectors[i]
+    def reorthogonalize(self):
+        Q, _ = np.linalg.qr(np.transpose(self.Y))
+        # self.Y =  np.transpose(Q)
+        self.Y =  np.sqrt(self.sample_size) * np.transpose(Q)
+        vectors = []
+        for i in range(self.R):
+            vectors.append(self.U[i].vector()[:])
+        # vectors = np.matmul(_ ,vectors)
+        vectors = np.matmul(_ /np.sqrt(self.sample_size),vectors)
+        for i in range(self.R):
+            self.U[i].vector()[:] = vectors[i]
 
 
     #explicit scheme
@@ -777,14 +778,14 @@ class DLR2:
          
             self.matrix_calculate()
 
+            A = []
+            for i in range(self.R):
+                A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
+            A = np.array(A)
             det = np.linalg.det(self.matrix)
             if np.isclose(det, 0):
-                break
+                self.Y += -self.dt * scipy.linalg.lstsq(self.matrix,A)[0]
             else:
-                A = []
-                for i in range(self.R):
-                    A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
-                A = np.array(A)
                 self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
                 #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
                 
@@ -1127,7 +1128,7 @@ class DLR3:
         for i in range(self.sample_size):
             func = self.mean
             for j in range(self.R):
-                func += (self.U[j] * Constant(self.Y[j][i]) )
+                func += (self.U_n[j] * Constant(self.Y[j][i]) )
             u.append(func)
         for i in range(self.R):
             for j in range(self.sample_size):
@@ -1174,8 +1175,8 @@ class DLR3:
             ortho += np.inner(v,self.Y[i]) / self.sample_size * self.Y[i]
         return v - ortho
     
-    def reorthogonalize(self):
-        return
+    # def reorthogonalize(self):
+    #     return
 
     # def reorthogonalize(self):
     #     U_vectors = []
@@ -1210,17 +1211,17 @@ class DLR3:
     #         self.U[i].vector()[:] = U_vectors[i]
     #     self.Y = Vt_reduced * np.sqrt(self.sample_size)
 
-    # def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
-    #     Q, _ = np.linalg.qr(np.transpose(self.Y))
-    #     # self.Y = np.transpose(Q) 
-    #     self.Y = np.transpose(Q) *np.sqrt(self.sample_size)
-    #     vectors = []
-    #     for i in range(self.R):
-    #         vectors.append(self.U[i].vector()[:])
-    #     vectors = np.matmul(_,vectors)
-    #     for i in range(self.R):
-    #         # self.U[i].vector()[:] = vectors[i] 
-    #         self.U[i].vector()[:] = vectors[i] /np.sqrt(self.sample_size)
+    def reorthogonalize(self): #dimension :Y(self.R,self.sample_size), U(self.R,V)
+        Q, _ = np.linalg.qr(np.transpose(self.Y))
+        # self.Y = np.transpose(Q) 
+        self.Y = np.transpose(Q) *np.sqrt(self.sample_size)
+        vectors = []
+        for i in range(self.R):
+            vectors.append(self.U[i].vector()[:])
+        vectors = np.matmul(_,vectors)
+        for i in range(self.R):
+            # self.U[i].vector()[:] = vectors[i] 
+            self.U[i].vector()[:] = vectors[i] /np.sqrt(self.sample_size)
 
 
 
@@ -1267,15 +1268,15 @@ class DLR3:
          
             self.matrix_calculate()
 
-            det = np.linalg.det(self.matrix)
-            # if np.isclose(det, 0):
-            #     break
-            # else:
             A = []
             for i in range(self.R):
                 A.append(self.orthogonal_projection(self.a_grad_u_grad_U(self.a)[i]))
             A = np.array(A)
-            self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
+            det = np.linalg.det(self.matrix)
+            if np.isclose(det, 0):
+                self.Y += -self.dt * scipy.linalg.lstsq(self.matrix,A)[0]
+            else:
+                self.Y += -self.dt * scipy.linalg.solve(self.matrix,A)
             #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
             
             
