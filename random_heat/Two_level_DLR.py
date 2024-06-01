@@ -35,7 +35,7 @@ u_0 = 10 sin(πx1) sin(πx2) + 4/3 sin(6πx1) sin(6πx2) + 2 sin(2πx1) sin(2πx
 """
 
 class Two_level_DLR:
-    def __init__(self,dt,n_f,n_c,a,a_0,a_sto,Y_f,Y_c,delta_f,delta_c,R_f = 3,R_c=5,sample_size = 50,mesh_type='1D'):
+    def __init__(self,dt,n_f,n_c,a,a_0,a_sto,Y_f = None,Y_c = None,delta_f = None,delta_c = None,YU = None,R_f = 3,R_c=5,sample_size = 50,mesh_type='1D'):
         self.dt = dt  # time step
         self.n_f = n_f  # number of mesh
         self.h_f = 1 / n_f  # element size
@@ -61,26 +61,71 @@ class Two_level_DLR:
         self.bc_f = DirichletBC(self.V_f, Constant(0), 'on_boundary')
         self.bc_c = DirichletBC(self.V_c, Constant(0), 'on_boundary')
 
-        
+        # Mass matrix
+        self.mass_matrix_f = self._assemble_mass_matrix(self.V_f)
+        self.mass_matrix_c = self._assemble_mass_matrix(self.V_c)
+
         ## Initialize functions 
     
-            
-        # stochatic basis functions    
-            
-        self.Y_f = Y_f #(R_f,sample_size)
-        self.Y_f = np.array(self.Y_f)
-        self.Y_c = Y_c #(R_c,sample_size)
-        self.Y_c = np.array(self.Y_c)
-        self.Y_c_n = self.Y_c
+        if YU == None:  
+            # stochatic basis functions    
+                
+            self.Y_f = Y_f #(R_f,sample_size)
+            self.Y_f = np.array(self.Y_f)
+            self.Y_c = Y_c #(R_c,sample_size)
+            self.Y_c = np.array(self.Y_c)
+            self.Y_c_n = self.Y_c
 
+            
+            # Deterministic basis functions
+            self.delta_f = [interpolate(df_i, self.V_f) for df_i in delta_f]
+            self.delta_f_n = [interpolate(df_i, self.V_f) for df_i in delta_f]
+            self.delta_c = [interpolate(dc_i, self.V_c) for dc_i in delta_c]
+            self.delta_c_n = [interpolate(dc_i, self.V_c) for dc_i in delta_c]
+
+            self.reorthogonalize_f()
+            self.reorthogonalize_c()
         
-        # Deterministic basis functions
-        self.delta_f = [interpolate(df_i, self.V_f) for df_i in delta_f]
-        self.delta_f_n = [interpolate(df_i, self.V_f) for df_i in delta_f]
-        self.delta_c = [interpolate(dc_i, self.V_c) for dc_i in delta_c]
-        self.delta_c_n = [interpolate(dc_i, self.V_c) for dc_i in delta_c]
-
-
+            
+            for i in range(self.R_f):
+                self.delta_f_n[i].assign(self.delta_f[i])
+            for i in range(self.R_c):
+                self.delta_c_n[i].assign(self.delta_c[i])
+            self.Y_c_n = self.Y_c
+            
+        else:
+            self.delta_f = [Function(self.V_f) for i in range(self.R_f)]
+            self.delta_f_n = [Function(self.V_f) for i in range(self.R_f)]
+            self.delta_c = [Function(self.V_c) for i in range(self.R_c)]
+            self.delta_c_n = [Function(self.V_c) for i in range(self.R_c)]
+            v2d = vertex_to_dof_map(self.V_c)
+            UY  = np.array([interpolate(YU[i],self.V_c).vector()[v2d] for i in range(self.sample_size)]).T
+            Matrix = UY.T @ self.mass_matrix_c @ UY
+            U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
+            Vt_reduced = Vt[:self.R_c, :]
+            self.Y_c = Vt_reduced 
+            self.Y_c_n = Vt_reduced 
+            U_vectors = (Vt @ UY.T)[:self.R_c, :]
+            self. Y_c  *= np.sqrt(self.sample_size)
+            self.Y_c_n *= np.sqrt(self.sample_size)
+            for i in range(self.R_c):
+                self.delta_c[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
+                self.delta_c_n[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
+            
+            v2d = vertex_to_dof_map(self.V_f)
+            UY  = np.array([interpolate(YU[i],self.V_f).vector()[v2d] for i in range(self.sample_size)]).T
+            UY2 = np.array([interpolate(self.delta_c[i],self.V_f).vector()[v2d] for i in range(self.R_c)]).T @ self.Y_c
+            UY = UY - UY2
+            Matrix = UY.T @ self.mass_matrix_f @ UY
+            U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
+            Vt_reduced = Vt[:self.R_f, :]
+            self.Y_f = Vt_reduced 
+            U_vectors = (Vt @ UY.T)[:self.R_f, :]
+            self. Y_f  *= np.sqrt(self.sample_size)
+            for i in range(self.R_f):
+                self.delta_f[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
+                self.delta_f_n[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
+                
 
         ## set coefficient
         self.a_0 = a_0
@@ -92,20 +137,6 @@ class Two_level_DLR:
         self.matrix_f = np.zeros((R_f,R_f)) 
         self.matrix_c = np.zeros((R_c,R_c)) 
 
-        # Mass matrix
-        self.mass_matrix_f = self._assemble_mass_matrix(self.V_f)
-        self.mass_matrix_c = self._assemble_mass_matrix(self.V_c)
-
-       
-        self.reorthogonalize_f()
-        self.reorthogonalize_c()
-    
-        
-        for i in range(self.R_f):
-            self.delta_f_n[i].assign(self.delta_f[i])
-        for i in range(self.R_c):
-            self.delta_c_n[i].assign(self.delta_c[i])
-        self.Y_c_n = self.Y_c
         
 
         ##for plot
@@ -200,7 +231,9 @@ class Two_level_DLR:
             
             for i in range(self.R_f):
                 for j in range(self.sample_size):
-                    ans[i][j] = assemble(dot(project(grad(a[j] * u1[j]),VectorFunctionSpace(self.mesh_f, 'P', 1)) - project(project(grad(a[j] * u2[j]),VectorFunctionSpace(self.mesh_c, 'P', 1)),VectorFunctionSpace(self.mesh_f, 'P', 1)),grad(self.delta_f[i])) * dx)
+                    a_grad_u_1 = project(a[j] * grad(u1[j]),VectorFunctionSpace(self.mesh_f, 'P', 1))
+                    a_grad_u_2 = project(project(a[j] * grad(u2[j]),VectorFunctionSpace(self.mesh_c, 'P', 1)),VectorFunctionSpace(self.mesh_f, 'P', 1))
+                    ans[i][j] = assemble(dot(a_grad_u_1 - a_grad_u_2 ,grad(self.delta_f[i])) * dx)
             return ans
         
         elif cf == "c":     
@@ -209,7 +242,8 @@ class Two_level_DLR:
             
             for i in range(self.R_c):
                 for j in range(self.sample_size):
-                    ans[i][j] =  assemble(dot(project(grad(a[j] * u[j]),VectorFunctionSpace(self.mesh_c, 'P', 1)),grad(self.delta_c[i])) * dx)
+                    a_grad_u = project(a[j] * grad(u[j]),VectorFunctionSpace(self.mesh_c, 'P', 1))
+                    ans[i][j] =  assemble(dot(a_grad_u,grad(self.delta_c[i])) * dx)
             return ans
         
         else: 
