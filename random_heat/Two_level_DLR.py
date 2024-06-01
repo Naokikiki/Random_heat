@@ -74,7 +74,7 @@ class Two_level_DLR:
             self.Y_f = np.array(self.Y_f)
             self.Y_c = Y_c #(R_c,sample_size)
             self.Y_c = np.array(self.Y_c)
-            self.Y_c_n = self.Y_c
+            self.Y_c_n = copy.deepcopy(self.Y_c)
 
             
             # Deterministic basis functions
@@ -91,7 +91,7 @@ class Two_level_DLR:
                 self.delta_f_n[i].assign(self.delta_f[i])
             for i in range(self.R_c):
                 self.delta_c_n[i].assign(self.delta_c[i])
-            self.Y_c_n = self.Y_c
+            self.Y_c_n = copy.deepcopy(self.Y_c)
             
         else:
             self.delta_f = [Function(self.V_f) for i in range(self.R_f)]
@@ -103,11 +103,10 @@ class Two_level_DLR:
             Matrix = UY.T @ self.mass_matrix_c @ UY
             U, S, Vt = np.linalg.svd(Matrix, full_matrices=False,hermitian=True)
             Vt_reduced = Vt[:self.R_c, :]
-            self.Y_c = Vt_reduced 
-            self.Y_c_n = Vt_reduced 
+            self.Y_c = Vt_reduced  
             U_vectors = (Vt @ UY.T)[:self.R_c, :]
-            self. Y_c  *= np.sqrt(self.sample_size)
-            self.Y_c_n *= np.sqrt(self.sample_size)
+            self.Y_c  *= np.sqrt(self.sample_size)
+            self.Y_c_n  = copy.deepcopy(self.Y_c)
             for i in range(self.R_c):
                 self.delta_c[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
                 self.delta_c_n[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
@@ -121,7 +120,7 @@ class Two_level_DLR:
             Vt_reduced = Vt[:self.R_f, :]
             self.Y_f = Vt_reduced 
             U_vectors = (Vt @ UY.T)[:self.R_f, :]
-            self. Y_f  *= np.sqrt(self.sample_size)
+            self.Y_f  *= np.sqrt(self.sample_size)
             for i in range(self.R_f):
                 self.delta_f[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
                 self.delta_f_n[i].vector()[v2d] = U_vectors[i] / np.sqrt(self.sample_size)
@@ -379,7 +378,7 @@ class Two_level_DLR:
                 self.delta_c_n[i].assign(self.delta_c[i])
             for i in range(self.R_f):
                 self.delta_f_n[i].assign(self.delta_f[i])
-            self.Y_c_n = self.Y_c
+            self.Y_c_n = copy.deepcopy(self.Y_c)
            
             if count % 1 == 0:
                 self.timelist.append(t)
