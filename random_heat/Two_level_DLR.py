@@ -549,6 +549,10 @@ class Two_level_DLR2:
         self.energylist = []
         self.L2list= []
 
+        self.build_c = [self._build_function_c(i) for i in range(self.sample_size)]  
+        self.build_f = [self._build_function_f(i) for i in range(self.sample_size)]    
+        self.a_delta_u_list = [Constant(0)for i in range(self.sample_size)]
+        
    # calculate Mass matrix
     def _assemble_mass_matrix(self, V):
             tri = TrialFunction(V)
@@ -596,21 +600,34 @@ class Two_level_DLR2:
         for j in range(self.R_c):
             func += self.delta_c_n[j] * Constant(self.Y_c_n[j, i])
         return func
+    def a_delta_u(self,i):
+        ans = TrialFunction(self.V_c)
+        v_c = TestFunction(self.V_c)
+        u = self.build_c
+        l = ans * v_c * dx
+        r = - self.a[i] * dot(grad(u) * grad(v_c)) * dx
+        solve(l==r,ans,self.bc_c)
+        return interpolate(ans,self.V_f)
+    
+    def E_a_delta_u_Y(self,Y):
+        ans = Constant(0)
+        for i in range(self.sample_size):
+            ans += self.a_delta_u_list[i] * Y[i]
+        ans /= self.sample_size
+        return ans     
 
     def E_a_grad_u_Y(self, a, Y, cf):
         if cf == "f":
-            grad_list = [grad(self._build_function_f(i)) for i in range(self.sample_size)]
-            ans = a[0] * grad_list[0] * Y[0]
+            ans = a[0] * grad(self.build_f[0]) * Y[0]
             for i in range(1, self.sample_size):
-                ans += a[i] * grad_list[i] * Y[i]
+                ans += a[i] * grad(self.build_f[i]) * Y[i]
             ans /= self.sample_size
             return ans 
 
         elif cf == "c":
-            grad_list = [grad(self._build_function_c(i)) for i in range(self.sample_size)]
-            ans = a[0] * grad_list[0] * Y[0]
+            ans = a[0] * grad(self.build_c[0]) * Y[0]
             for i in range(1, self.sample_size):
-                ans += a[i] * grad_list[i] * Y[i]
+                ans += a[i] * grad(self.build_c[i]) * Y[i]
             ans /= self.sample_size
             return ans
 
@@ -621,18 +638,17 @@ class Two_level_DLR2:
     def a_grad_u_grad_U(self,a,cf):
         if cf == "f":     
             ans = np.zeros((self.R_f,self.sample_size)) 
-            u1 = [self._build_function_f(i) for i in range(self.sample_size)]
+            u1 = self.build_f
             
             for i in range(self.R_f):
                 for j in range(self.sample_size):
                     a_grad_u_1 = a[j] * grad(u1[j])
-                    ans[i][j] = assemble(dot(a_grad_u_1, grad(self.delta_f[i])) *dx +(interpolate(self.delta_c[i],self.V_f) - interpolate(self.delta_c_n[i],self.V_f))/self.dt  * self.delta_f[i] * dx)
+                    ans[i][j] = assemble(dot(a_grad_u_1, grad(self.delta_f[i])) *dx + self.a_delta_u_list[j] * self.delta_f[i] * dx)
             return ans
         
         elif cf == "c":     
             ans = np.zeros((self.R_c,self.sample_size)) 
-            u = [self._build_function_c(i) for i in range(self.sample_size)]
-            
+            u = self.build_c
             for i in range(self.R_c):
                 for j in range(self.sample_size):
                     a_grad_u = a[j] * grad(u[j])
@@ -719,14 +735,17 @@ class Two_level_DLR2:
         
         for i in range(self.R_f):
             a_i = self.delta_f[i] * v_f * dx
-            L_i = self.delta_f_n[i] * v_f * dx - self.dt * (self.E_a_grad_u_Y(self.a,self.Y_f[i],cf= "f"), v_f) * dx - (interpolate(self.delta_c[i],self.V_f) - interpolate(self.delta_c_n[i],self.V_f) )* v_f * dx
+            L_i = self.delta_f_n[i] * v_f * dx - self.dt * dot(self.E_a_grad_u_Y(self.a,self.Y_f[i],cf= "f"), grad(v_f)) * dx - self.dt * self.E_a_delta_u_Y(self.Y_f[i]) * v_f * dx
             lhs_f.append(a_i)
             rhs_f.append(L_i)
            
         for i in range(self.R_f):
             self.delta_f[i] = Function(self.V_f)
         
-        while t < end:           
+        while t < end:      
+            self.build_c = [self._build_function_c(i) for i in range(self.sample_size)]  
+            self.build_f = [self._build_function_f(i) for i in range(self.sample_size)]    
+            self.a_delta_u_list = [self.a_delta_u(i)for i in range(self.sample_size)]
             # Compute solution
             for i in range(self.R_c):
                 solve(lhs_c[i]==rhs_c[i],self.delta_c[i],self.bc_c)
