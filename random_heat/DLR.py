@@ -616,7 +616,9 @@ class DLR2:
         self.energylist = []
         self.L2list= []
 
-        self.build = [interpolate(Constant(0),self.V) for i in range(self.sample_size)]
+        self.build = [Constant(0)] * self.sample_size
+        self.build_function()
+
    
     # calculate quadratures, M_i,j = <U_i,U_j>
     def matrix_calculate(self):
@@ -630,13 +632,12 @@ class DLR2:
                 self.matrix[j][i] = value
 
     ## subfunctions for calculating dinamics
-    
-    def build_function(self,i):
-        u = []
-        func = Constant(0)
-        for j in range(self.R):
-            func += (self.U_n[j] * Constant(self.Y[j][i]) )
-        return func
+    def build_function(self):
+        for i in range(self.sample_size):
+            func = Constant(0)
+            for j in range(self.R):
+                func += (self.U_n[j] * Constant(self.Y[j][i]))
+            self.build[i] = func
 
     def E_a_grad_u_Y(self,a,Y):
         grad_list = []
@@ -654,10 +655,9 @@ class DLR2:
 
     def a_grad_u_grad_U(self,a):
         ans = np.zeros((self.R,self.sample_size)) 
-        u = self.build
         for i in range(self.R):
             for j in range(self.sample_size):
-                ans[i][j] = assemble(a[j] * dot(grad(u[j]),grad(self.U[i])) * dx)
+                ans[i][j] = assemble(dot(a[j] *grad(self.build[j]),grad(self.U[i])) * dx)
         
         return ans
     
@@ -776,9 +776,9 @@ class DLR2:
         for i in range(self.R):
             self.U[i] = Function(self.V)
         
-        while t < end:  
-            self.build = [self.build_function(i) for i in range(self.sample_size)]         
+        while t < end:           
             # Compute solution
+            self.build_function()
             for i in range(self.R):
                 solve(lhs[i]==rhs[i],self.U[i],self.bc)
          
@@ -1441,5 +1441,266 @@ class DLR3:
         plot(self.mean)
         plt.show()
         
+class DLR4:
+    def __init__(self,dt,n,U,Y,a,a_0,a_sto,M=10,R = 3,sample_size = 50,mesh_type='2D'):
+        self.dt = dt  # time step
+        self.n = n  # number of mesh
+        self.h = 1 / n  # element size
+        self.M = M  # The number of random variables( The number of truncation of a(ξ))
+        self.R = R  # rank of DLR
+        self.sample_size = sample_size  # stochastic discretization
+        
+        if mesh_type == '1D':
+            self.mesh = UnitIntervalMesh(self.n)
+        elif mesh_type == '2D':
+            self.mesh = UnitSquareMesh(self.n, self.n)
+        else:
+            raise ValueError("Invalid mesh_type. Use '1D' or '2D'.")
+
+        self.V = FunctionSpace(self.mesh, 'P', 1)
+        # self.V_R = MixedFunctionSpace([self.V] * self.R)
+
+        ## Define boundary condition
+        self.bc = DirichletBC(self.V, Constant(0), 'on_boundary')
+
+        
+        ## Initialize functions 
+       
+         # stochatic basis functions        
+        self.Y = Y #(R,sample_size)
+        self.Y = np.array(self.Y)
+        
+        # deterministic basis functions
+        self.U = []#  (R,V_h) 
+        self.U_n = []
+        for u_i in U:
+            self.U.append(interpolate(u_i,self.V))
+            self.U_n.append(interpolate(u_i,self.V))
+
+        ## set coefficient
+        self.a_0 = a_0
+        self.a_sto = a_sto
+        self.a = a 
+        
+
+        #M_i,j = <U_i,U_j>
+        self.matrix = np.zeros((self.R,self.R)) 
+
+        # Mass matrix
+        tri = TrialFunction(self.V)
+        test = TestFunction(self.V)
+        integral = tri * test * dx
+        A = assemble(integral)
+        # Convert the matrix to a NumPy array for easier inspection
+        self.mass_matrix = as_backend_type(A).mat().getValues(range(A.size(0)), range(A.size(1)))
+
+
+        # print("hi",self.energynorm())
+        # print("hi",self.exl2norm())
+        # print(np.mean(self.Y[0]))
+        # print(np.mean(self.Y[1]))
+        # print(np.mean(self.Y[2]))
+       
+        self.reorthogonalize()
+        # print("hi",self.energynorm())
+        # print("hi",self.exl2norm())
+        # print(np.matmul(self.Y,np.transpose(self.Y)))
+        # print(np.mean(self.Y[0]))
+        # print(np.mean(self.Y[1]))
+        # print(np.mean(self.Y[2]))
+        
+        for i in range(self.R):
+            self.U_n[i].assign(self.U[i])
+        
+
+        ##for plot
+        self.timelist = []
+        self.energylist = []
+        self.L2list= []
+
+        self.build = [interpolate(Constant(0),self.V) for i in range(self.sample_size)]
+        self.a_delta_u = [interpolate(Constant(0),self.V) for i in range(self.sample_size)]
+   
+    # calculate quadratures, M_i,j = <U_i,U_j>
+    def matrix_calculate(self):
+        v2d = vertex_to_dof_map(self.V)
+        for i in range(self.R):
+            for j in range(i, self.R):
+                dof_i = self.U[i].vector()[v2d]
+                dof_j = self.U[j].vector()[v2d]
+                value = np.dot(dof_i, np.dot(self.mass_matrix, dof_j))
+                self.matrix[i][j] = value
+                self.matrix[j][i] = value
+
+    ## subfunctions for calculating dinamics
     
+    def build_function(self,i):
+        func = Constant(0)
+        for j in range(self.R):
+            func += (self.U_n[j] * Constant(self.Y[j][i]) )
+        return func
+    
+
+    def a_delta_u_U(self):
+        ans = np.zeros((self.R,self.sample_size)) 
+        for i in range(self.R):
+            for j in range(self.sample_size):
+                ans[i][j] = assemble(self.a_delta_u[j] * self.U[i] * dx)
+        
+        return ans
+    
+    def orthogonal_projection(self,v):
+        ortho = np.inner(v,self.Y[0]) / self.sample_size * self.Y[0]
+        for i in range(1,self.R):
+            ortho += np.inner(v,self.Y[i]) / self.sample_size * self.Y[i]
+        return v - ortho
+    
+    
+    def reorthogonalize(self):
+        Q, _ = np.linalg.qr(np.transpose(self.Y))
+        # self.Y =  np.transpose(Q)
+        self.Y =  np.sqrt(self.sample_size) * np.transpose(Q)
+        vectors = []
+        for i in range(self.R):
+            vectors.append(self.U[i].vector()[:])
+        # vectors = np.matmul(_ ,vectors)
+        vectors = np.matmul(_ /np.sqrt(self.sample_size),vectors)
+        for i in range(self.R):
+            self.U[i].vector()[:] = vectors[i]
+
+
+    #explicit scheme
+    def explicit_simulate(self,end = 2.5):
+        t = 0
+        count = 0 # calculate energynorm each step is cotly so only every some steps
+        self.timelist.append(t)
+        energy = self.energynorm()
+        self.energylist.append(energy)
+        l2 = self.exl2norm()
+        self.L2list.append(l2)
+        print("time: ",t)
+        print("energy norm: ", energy )
+        print("L2 norm: ", l2 )
+
+        # Define variational problem
+        
+        for i in range(self.sample_size):
+            self.a_delta_u[i] = TrialFunction(self.V)
+        v = TestFunction(self.V)
+
+        lhs = []
+        rhs = []
+        for i in range(self.sample_size):
+            a_i = self.a_delta_u[i] * v * dx
+            L_i = - self.a[i] * dot(grad(self.build[i]), grad(v)) * dx
+            lhs.append(a_i)
+            rhs.append(L_i)
+           
+        for i in range(self.R):
+            self.a_delta_u[i] = Function(self.V)
+        
+        while t < end:  
+            self.build = [self.build_function(i) for i in range(self.sample_size)]         
+            # Compute solution
+         
+            for i in range(self.sample_size):
+                solve(lhs[i]==rhs[i],self.a_delta_u[i],self.bc)
+            for i in range(self.R):
+                diff = Constant(0)
+                for j in range(self.sample_size):
+                    diff += self.a_delta_u[j] * self.Y[i][j]
+                diff /= self.sample_size
+                self.U[i] += self.dt * diff
+         
+            self.matrix_calculate()
+
+            A = []
+            for i in range(self.R):
+                A.append(self.orthogonal_projection(self.a_delta_u_U[i]))
+            A = np.array(A)
+            det = np.linalg.det(self.matrix)
+            if np.isclose(det, 0):
+                self.Y += self.dt * scipy.linalg.lstsq(self.matrix,A)[0]
+            else:
+                self.Y += self.dt * scipy.linalg.solve(self.matrix,A)
+                #                 self.Y += -self.dt * np.matmul(scipy.linalg.inv(self.matrix),A)
+                
+            
+            # reorthogonalize
+            self.reorthogonalize()
+
+            t  += self.dt
+            count += 1
+            
+            for i in range(self.R):
+                self.U_n[i].assign(self.U[i])
+           
+            if count % 1 == 0:
+                self.timelist.append(t)
+                energy = self.energynorm()
+                self.energylist.append(energy)
+                l2 = self.exl2norm()
+                self.L2list.append(l2)
+                print("time: ",t)
+                print("energy norm: ", energy )
+                print("L2 norm: ", l2 )
+                if energy > 10 ** 7:
+                    break 
+                    
+        self.plot_field()
+        self.plot_norm()
+
+        
+
+
+   #energy norm
+
+    def energynorm(self):
+        u = Constant(0)
+        for j in range(self.R):
+            u += self.U[j] * Constant(self.Y[j][0])
+        form = self.a[0] * inner(grad(u), grad(u)) * dx
+        for i in range(1,self.sample_size):
+            u = Constant(0)
+            for j in range(self.R):
+                u += self.U[j] * Constant(self.Y[j][i])
+            form += self.a[i] * inner(grad(u), grad(u)) * dx
+        energy = assemble(form) / self.sample_size
+        return energy
+    
+    def exl2norm(self):
+        u = Constant(0)
+        for j in range(self.R):
+            u += self.U[j] * Constant(self.Y[j][0])
+        form = u* u * dx
+        for i in range(1,self.sample_size):
+            u = Constant(0)
+            for j in range(self.R):
+                u += self.U[j] * Constant(self.Y[j][i])
+            form += u* u * dx
+        exl2 = assemble(form) / self.sample_size
+        return np.sqrt(exl2)
+            
+
+
+    
+    # monitor energy norm
+    def plot_norm(self):
+            plt.plot(self.timelist, self.energylist)
+            plt.plot(self.timelist, self.L2list)
+            plt.yscale('log')
+            plt.xlabel("time")
+            plt.ylabel("norm")
+            plt.legend(['energy norm','L2 norm'])
+            plt.show()
+        
+    #visualize mean function of the random field
+    def plot_field(self):
+        u = 0
+        for i in range(self.R):
+            u += self.U[i] * np.mean(self.Y[i])
+        plot(u)
+        plt.show()
+        
+   
 
