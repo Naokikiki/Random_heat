@@ -114,7 +114,7 @@ class DLR:
             self.a = a
 
         #M_i,j = <U_i,U_j>
-        self.matrix = np.zeros((R,R)) 
+        self.matrix = np.zeros((self.R,self.R)) 
 
         # Mass matrix
         tri = TrialFunction(self.V)
@@ -157,9 +157,12 @@ class DLR:
 
     # calculate quadratures, M_i,j = <U_i,U_j>
     def matrix_calculate(self):
+        v2d = vertex_to_dof_map(self.V)
         for i in range(self.R):
-            for j in range(i,self.R):
-                value = assemble((self.U[i]*self.U[j]) * dx)
+            for j in range(i, self.R):
+                dof_i = self.U[i].vector()[v2d]
+                dof_j = self.U[j].vector()[v2d]
+                value = np.dot(dof_i, np.dot(self.mass_matrix, dof_j))
                 self.matrix[i][j] = value
                 self.matrix[j][i] = value
 
@@ -579,7 +582,7 @@ class DLR2:
         
 
         #M_i,j = <U_i,U_j>
-        self.matrix = np.zeros((R,R)) 
+        self.matrix = np.zeros((self.R,self.R)) 
 
         # Mass matrix
         tri = TrialFunction(self.V)
@@ -613,25 +616,32 @@ class DLR2:
         self.energylist = []
         self.L2list= []
 
+        self.build = [interpolate(Constant(0),self.V) for i in range(self.sample_size)]
    
     # calculate quadratures, M_i,j = <U_i,U_j>
     def matrix_calculate(self):
+        v2d = vertex_to_dof_map(self.V)
         for i in range(self.R):
-            for j in range(i,self.R):
-                value = assemble((self.U[i]*self.U[j]) * dx)
+            for j in range(i, self.R):
+                dof_i = self.U[i].vector()[v2d]
+                dof_j = self.U[j].vector()[v2d]
+                value = np.dot(dof_i, np.dot(self.mass_matrix, dof_j))
                 self.matrix[i][j] = value
                 self.matrix[j][i] = value
 
     ## subfunctions for calculating dinamics
     
+    def build_function(self,i):
+        u = []
+        func = Constant(0)
+        for j in range(self.R):
+            func += (self.U_n[j] * Constant(self.Y[j][i]) )
+        return func
 
     def E_a_grad_u_Y(self,a,Y):
         grad_list = []
         for i in range(self.sample_size):
-            func = Constant(0)
-            for j in range(self.R):
-                func += (self.U_n[j] * self.Y[j][i])
-            grad_list.append(grad(func))
+            grad_list.append(grad(self.build[i]))
         ans = a[0]* grad_list[0]* Y[0]
         for i in range(1,self.sample_size):
             ans += (a[i]* grad_list[i]* Y[i])
@@ -644,15 +654,10 @@ class DLR2:
 
     def a_grad_u_grad_U(self,a):
         ans = np.zeros((self.R,self.sample_size)) 
-        u = []
-        for i in range(self.sample_size):
-            func = Constant(0)
-            for j in range(self.R):
-                func += (self.U_n[j] * Constant(self.Y[j][i]) )
-            u.append(func)
+        u = self.build
         for i in range(self.R):
             for j in range(self.sample_size):
-                ans[i][j] = assemble(dot(a[j] *grad(u[j]),grad(self.U[i])) * dx)
+                ans[i][j] = assemble(a[j] * dot(grad(u[j]),grad(self.U[i])) * dx)
         
         return ans
     
@@ -771,7 +776,8 @@ class DLR2:
         for i in range(self.R):
             self.U[i] = Function(self.V)
         
-        while t < end:           
+        while t < end:  
+            self.build = [self.build_function(i) for i in range(self.sample_size)]         
             # Compute solution
             for i in range(self.R):
                 solve(lhs[i]==rhs[i],self.U[i],self.bc)
@@ -915,7 +921,7 @@ class DLR2:
                 u += self.U[j] * Constant(self.Y[j][i])
             form += u* u * dx
         exl2 = assemble(form) / self.sample_size
-        return exl2
+        return np.sqrt(exl2)
             
 
 
@@ -1040,7 +1046,7 @@ class DLR3:
             self.a = a
 
         #M_i,j = <U_i,U_j>
-        self.matrix = np.zeros((R,R)) 
+        self.matrix = np.zeros((self.R,self.R)) 
 
         # Mass matrix
         tri = TrialFunction(self.V)
@@ -1083,9 +1089,12 @@ class DLR3:
 
     # calculate quadratures, M_i,j = <U_i,U_j>
     def matrix_calculate(self):
+        v2d = vertex_to_dof_map(self.V)
         for i in range(self.R):
-            for j in range(i,self.R):
-                value = assemble((self.U[i]*self.U[j]) * dx)
+            for j in range(i, self.R):
+                dof_i = self.U[i].vector()[v2d]
+                dof_j = self.U[j].vector()[v2d]
+                value = np.dot(dof_i, np.dot(self.mass_matrix, dof_j))
                 self.matrix[i][j] = value
                 self.matrix[j][i] = value
 

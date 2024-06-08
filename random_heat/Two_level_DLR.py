@@ -549,8 +549,8 @@ class Two_level_DLR2:
         self.energylist = []
         self.L2list= []
 
-        self.build_c = [self._build_function_c(i) for i in range(self.sample_size)]  
-        self.build_f = [self._build_function_f(i) for i in range(self.sample_size)]    
+        self.build_c = [interpolate(Constant(0),self.V_c) for i in range(self.sample_size)]  
+        self.build_f = [interpolate(Constant(0),self.V_f) for i in range(self.sample_size)]    
         self.a_delta_u_list = [Constant(0)for i in range(self.sample_size)]
         
    # calculate Mass matrix
@@ -603,9 +603,10 @@ class Two_level_DLR2:
     def a_delta_u(self,i):
         ans = TrialFunction(self.V_c)
         v_c = TestFunction(self.V_c)
-        u = self.build_c
+        u = self.build_c[i]
         l = ans * v_c * dx
-        r = - self.a[i] * dot(grad(u) * grad(v_c)) * dx
+        r = - self.a[i] * dot(grad(u),grad(v_c)) * dx
+        ans = Function(self.V_c)
         solve(l==r,ans,self.bc_c)
         return interpolate(ans,self.V_f)
     
