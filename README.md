@@ -6,7 +6,7 @@ This repository contains code implementing the **Dynamical Low Rank Approximatio
 ## DLRA Theories
 
 For a theoretical foundation of Dynamical Low Rank Approximation, please refer to the accompanying slides.
-[GODA_group_seminar_presentation.pdf](https://github.com/user-attachments/files/18272579/GODA_group_seminar_presentation.pdf)
+[Dynamical Low Rank Approximation.pdf](https://github.com/user-attachments/files/18388072/Dynamical.Low.Rank.Approximation.pdf)
 
 ## Contributions
 
